@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Semantic Search</title>
+</head>
+
+<body style="font-family: Arial, sans-serif; margin: 10px;">
+<h2>Semantic Search</h2>
+<div style="border: 1px solid #ccc; padding: 8px; margin-bottom: 10px;">
+    <h3>Reload Document</h3>
+    <label>Chunk Size:
+        <input type="number" id="chunkSize" value="500" style="width:70px;">
+    </label>
+    <br><br>
+    <label>Overlap:
+        <input type="number" id="overlap" value="50" style="width:70px;">
+    </label>
+    <br><br>
+    <button onclick="docLoad()">Reload</button>
+    <p id="loadStatus" style="color:green;"></p>
+</div>
+
+<div style="border: 1px solid #ccc; padding: 8px; margin-bottom: 10px;">
+    <h3>Semantic Search</h3>
+    <input type="text" id="query" placeholder="Enter your query" style="width:95%;">
+    <br><br>
+    <label>Number of Results (k):</label>
+    <input type="range" id="topK" min="1" max="10" value="5" oninput="sliderUpdate()" style="width:120px;">
+    <span id="sliderValue">5</span>
+    <br><br>
+    <button onclick="performSearch()">Search</button>
+</div>
+
+<div id="resultsContainer"></div>
+
+<canvas id="similarityChart" width="300" height="200" style="margin-top:10px; border: 1px solid #ccc;"></canvas>
+<script
+</body>
+</html>
