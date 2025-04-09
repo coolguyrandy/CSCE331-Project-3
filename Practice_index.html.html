@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    function LinkClicked(linkText) {
+  document.getElementById('output').innerText = 'You clicked on ' + linkText;
+}
+    function processInput() {
+      var text = document.getElementById('textInput').value;
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          document.getElementById('output').innerText = response;
+        })
+        .processText(text);
+    }
+    </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+    }
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .toolbar button {
+      padding: 5px 10px;
+    }
+    .dropbtn {
+  background-color: #003366;// Background of the toolbar button 
+  color: white;// White color 
+  padding: 16px; //Padding around the text for the better click area
+  font-size: 16px; //Font size of 16px
+  border: none; //No border around button
+}
+
+.dropdown {
+  position: relative; //postions element  relative to its normal position
+  display: inline-block;//Make dropdown content appear next to other elements inline
+}
+
+.dropdown-content {
+  display: none;// Hides dropdown by default
+  position: absolute;//Positions the dropdown content absolutely within parent
+  background-color: #f1f1f1; // dropdown is lightgray
+  min-width: 160px;// min width value
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);// shadows for depth
+  z-index: 1;//Makes sure the dropdown content is stacked above other elements on the page. This is especially useful if the dropdown might be near other elements.
+}
+
+.dropdown-content a {
+  color: black;// Text color for the links
+  padding: 12px 16px; // Adds padding around links (gives breathing room)
+  text-decoration: none;// removes underline from the links
+  display: block; //Makes each link behave as a block-level element, meaning it will take up the full width of the parent element, ensuring all the padding is applied around the text. 
+}
+
+.dropdown-content a:hover {background-color: #ddd;}// changes color when hovering over link
+
+.dropdown:hover .dropdown-content {display: block;}//Displays the dropdown menu when the parent is hovered 
+
+.dropdown:hover .dropbtn {background-color: #6A0DAD;} //Changes the button's background color on hover
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <button onclick="processInput()">Submit</button>
+    <button onclick="document.getElementById('textInput').value = ''">Clear</button>
+  <div class="dropdown">
+  <button class="dropbtn">Settings</button>
+  <div class="dropdown-content">
+    <a href="#" onclick="LinkClicked('Amount returned clicked')"> Amount returned</a>
+    <a href="#" onclick="LinkClicked('Font size clicked')">Font size </a>
+    <a href="#" onclick="LinkClicked('Similarity Threshold clicked')">Similarity Threshold</a>
+  </div>
+</div>
+</div>
+
+  <input type="text" id="textInput" placeholder="Enter text here" style="width:100%; padding:5px; margin-bottom:10px;">
+  
+  <div id="output"></div>
+
+</body>
+</html>
