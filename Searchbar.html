@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic Search</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .toolbar button, .dropbtn {
+            padding: 6px 12px;
+            font-size: 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #003366;
+            color: #fff;
+        }
+
+        .toolbar button:hover, .dropbtn:hover {
+            background: #22558c;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            min-width: 160px;
+            background: #f1f1f1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, .15);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background: #e6e6e6;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+        }
+
+        .section {
+            border: 1px solid #ccc;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin-top: 5px;
+        }
+
+        #resultsContainer {
+            max-height: 300px;
+            overflow-y: auto;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .resultItem {
+            border-bottom: 1px solid #eee;
+            padding: 5px 0;
+            cursor: pointer;
+        }
+
+        .resultItem:last-child {
+            border-bottom: none;
+        }
+
+        #similarityChart {
+            width: 100% !important;
+        }
+
+        details {
+            margin-top: 10px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #progressBar {
+            width: 100%;
+        }
+    </style>
+    <script>
+        let exampleResults = [];
+        let chartInstance = null;
+
+        function sliderUpdate() {
+            document.getElementById('sliderValue').innerText = document.getElementById('topK').value
+        }
+
+        function reload() {
+            document.getElementById('progressWrapper').style.display = 'block';
+            document.getElementById('progressBar').removeAttribute('value');
+            document.getElementById('loadStatus').innerText = 'Indexing…';
+            const cSize = document.getElementById('chunkSize').value;
+            const overlap = document.getElementById('overlap').value;
+            google.script.run.withSuccessHandler(res => {
+                const shortName = res.collectionName.length > 18 ? res.collectionName.slice(0, 15) + '…' : res.collectionName;
+                document.getElementById('progressBar').value = 100;
+                document.getElementById('loadStatus').innerText =
+                    `Indexed ${res.totalChunks} chunks (${res.inserted} inserted) into ${shortName}`;
+                exampleResults = [];
+                populateResults();
+                if (chartInstance) {
+                    chartInstance.destroy();
+                    chartInstance = null;
+                }
+                setTimeout(() => {
+                    document.getElementById('progressWrapper').style.display = 'none'
+                }, 700);
+            }).withFailureHandler(err => {
+                document.getElementById('loadStatus').innerText = 'Error: ' + err.message;
+                document.getElementById('progressWrapper').style.display = 'none';
+            }).reloadAndIndex(cSize, overlap);
+        }
+
+        function processInput() {
+            const text = document.getElementById('textInput').value;
+            const k = document.getElementById('topK').value;
+            document.getElementById('output').innerText = 'Searching…';
+            google.script.run.withSuccessHandler(results => {
+                exampleResults = results;
+                populateResults();
+                renderChart();
+                document.getElementById('output').innerText = 'Completed search.';
+            }).withFailureHandler(err => {
+                document.getElementById('output').innerText = 'Error: ' + err.message;
+            }).searchServer(text, k);
+        }
+
+        function populateResults() {
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = "";
+            exampleResults.forEach(result => {
+                const div = document.createElement('div');
+                div.className = "resultItem";
+                div.innerHTML = "<strong>Similarity:</strong> " + result.similarity.toFixed(2) + "<br><strong>Text:</strong> " + result.text;
+                div.onclick = () => google.script.run.highlightResult(result.text, result.similarity);
+                container.appendChild(div);
+            });
+        }
+
+        function renderChart() {
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            const ctx = document.getElementById('similarityChart').getContext('2d');
+            const labels = exampleResults.map((_, i) => "Result " + (i + 1));
+            const scores = exampleResults.map(r => r.similarity);
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {labels: labels, datasets: [{label: 'Similarity', data: scores}]},
+                options: {responsive: true, aspectRatio: 2, scales: {y: {min: 0, max: 1, ticks: {stepSize: 0.1}}}}
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="toolbar">
+    <button onclick="google.script.run.showHelp()">Help</button>
+    <button onclick="google.script.run.showConnection()">Connect</button>
+    <div class="dropdown">
+        <button class="dropbtn">Settings ▾</button>
+        <div class="dropdown-content">
+            <a href="#" onclick="alert('Similarity threshold setting coming soon')">Similarity threshold</a>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Reload Document</h2>
+    <details>
+        <summary>Advanced Options</summary>
+        <label>Chunk Size:<input type="number" id="chunkSize" value="500"></label>
+        <label>Overlap:<input type="number" id="overlap" value="50"></label>
+    </details>
+    <button onclick="reload()">Reload</button>
+    <div id="progressWrapper" style="display:none;">
+        <progress id="progressBar"></progress>
+    </div>
+    <p id="loadStatus" style="color:green;"></p>
+</div>
+
+<div class="section">
+    <h2>Search</h2>
+    <input type="text" id="textInput" placeholder="Enter your query">
+    <button onclick="processInput()">Search</button>
+    <label>Number of Results (k):<input type="range" id="topK" min="1" max="20" value="5" oninput="sliderUpdate()"><span
+            id="sliderValue">5</span></label>
+    <p id="output" style="color:red;"></p>
+</div>
+
+<div class="section">
+    <canvas id="similarityChart"></canvas>
+    <div id="resultsContainer"></div>
+</div>
+</body>
+</html>

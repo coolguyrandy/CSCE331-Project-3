@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic Search Help</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+        }
+
+        button {
+            padding: 6px 12px;
+        }
+    </style>
+</head>
+<body>
+<h1>Semantic Search Help</h1>
+
+<div class="section">
+    <h2>Overview</h2>
+    <p>
+        We built this sidebar to let you index and search your document by meaning, not just exact words. It sends
+        chunks of your text to Astra DB, uses an AI model to turn them into vectors, and then finds the best matches for
+        any query you type.
+    </p>
+</div>
+
+<div class="section">
+    <h2>How It Works</h2>
+    <ol>
+        <li>
+            <strong>Connect</strong>
+            <ul>
+                <li>Click the Connect button and paste your Astra endpoint and token.</li>
+                <li>These settings are saved so you only do this once.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Reload Document</strong>
+            <ul>
+                <li>Click Reload to split your document into chunks and upload them.</li>
+                <li>The progress bar shows how many chunks are sent (100 at a time).</li>
+                <li>Advanced Options let you tweak <code>Chunk Size</code> and <code>Overlap</code> if you want smaller
+                    or larger pieces.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <strong>Search</strong>
+            <ul>
+                <li>Type a question or phrase and click Search.</li>
+                <li>The system finds the top k matches, where k is your slider value.</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Explore Results</strong>
+            <ul>
+                <li>Click any result line to jump to that passage in the document.</li>
+                <li>Each click highlights that chunk with a color gradient: red means low match, green means high
+                    match.
+                </li>
+                <li>You can click multiple results one after another and each will be selected and highlighted.</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<div class="section">
+    <h2>UI Elements</h2>
+    <ul>
+        <li><strong>Slider (k)</strong>: controls how many results to return and plot.</li>
+        <li><strong>Similarity Chart</strong>: shows a bar chart of the scores for each result.</li>
+        <li><strong>Status Line</strong>: reports how many chunks were indexed and shows a shortened collection ID.</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Tips</h2>
+    <ul>
+        <li>If you change the text or options, click Reload again to reindex.</li>
+        <li>Your Astra collection is temporary. Reloading creates a new one each time.</li>
+        <li>If you hit Astra limits, delete old collections in your Astra dashboard.</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>What the Similarity Score Means</h2>
+    <p>
+        The system uses a pretrained model to compute a number between 0 and 1. A score near 1 means the text is almost
+        the same in meaning as your query. Scores around 0.7 or higher are usually very strong matches. Scores under 0.3
+        are weak or unrelated.
+    </p>
+</div>
+
+<p style="text-align: center;">
+    <button onclick="google.script.host.close()">Close Help</button>
+</p>
+</body>
+</html>
