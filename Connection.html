@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+</head>
+<body>
+<input type="text" id="endpoint" placeholder="Endpoint"><br>
+<input type="text" id="token" placeholder="Token"><br>
+<button onclick="submitData()">Submit</button>
+<button onclick="google.script.host.close()">Cancel</button>
+<button onclick="google.script.run.showImageDialog()">How to connect</button>
+<script>
+    function submitData(){
+        const endpoint = document.getElementById("endpoint").value;
+        const token    = document.getElementById("token").value;
+        google.script.run
+            .withSuccessHandler(() => google.script.host.close())
+            .saveCredentials(endpoint, token);
+    }
+</script>
+</body>
+</html>

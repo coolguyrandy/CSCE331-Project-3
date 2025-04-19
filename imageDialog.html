@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+      img {
+        width: 80px;
+        height: auto;
+        margin-bottom: 10px;
+      }
+      input {
+        margin: 5px 0;
+        padding: 6px;
+        width: 80%;
+      }
+      button {
+        margin: 10px 5px;
+        padding: 8px 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2> Connect to Astra DB </h2>
+    <h3> Step 1 </h3>
+    <p>Make an Astra DB account -&gt <a href="https://accounts.datastax.com/session-service/v1/login" target="_blank">AstraDB</a></p>
+    <h3> Step 2 </h3>
+    <p> After you create your account you should see something like this; Click on where it says database</p>
+    <img src="https://ik.imagekit.io/95ymo2cyk/Screenshot%20(203).png?updatedAt=1744839545026" alt="Placeholder Image" style="width:900px; height:300px;">
+    <br>
+    <h3> Step 3 </h3>
+    <p> Next you should see an option to create a database in the top right corner, Click that button and this should appear.</p>
+    <img src="https://ik.imagekit.io/95ymo2cyk/Screenshot%20(204).png?updatedAt=1744839544845" alt="Placeholder Image" style="width:561px; height:300px;">
+    <br> <p> Fill in the respective fields and wait for your database to finish initializing</p> 
+    <h3> Step 4 </h3>
+    <p> Click on the database on the leftside. On the right side you should see your API endpoint as well as a way to generate a token</p>
+    <img src="https://ik.imagekit.io/95ymo2cyk/Screenshot%20(207).png?updatedAt=1744839544934" alt="Placeholder Image" style="width:900px; height:300px;">
+    <h3> Step 5 </h3>
+    <p> Generate a token and then copy over both the token as well as the API endpoint into the text fields on the previous page.</p>
+    <button onclick="google.script.run.showConnection()"> Return to input</button>
+  </body>
+</html>
